@@ -18,6 +18,12 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <div class="header">
         <div class="top-bar">
-            <h1>Sistema de Músicas</h1>
+
+            <h1>
+                <a href="/aula0414teste/views/musicas/listar.php" style="text-decoration: none; color: inherit;">
+                    Sistema de Músicas
+                </a>
+            </h1>
+
         </div>
     </div>
