@@ -21,28 +21,45 @@ $dados = $repo->listar();
         </div>
     <?php endif; ?>
 
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+    <?php if(isset($_GET['confirmar'])): ?>
+        <div class="alert alert-error">
+            O gênero selecionado está vinculado a <?= $_GET['qtd'] ?> música(s).<br>
+            Ao continuar, essas músicas ficarão sem gênero associado.<br><br>
+            Deseja realmente excluir este gênero?
 
-        <tbody>
-            <?php foreach($dados as $d): ?>
-            <tr>
-                <td><?= $d['GeneroID'] ?></td>
-                <td><?= $d['nome'] ?></td>
-                <td class="actions">
-                    <a href="editar.php?id=<?= $d['GeneroID'] ?>" class="btn btn-edit">Editar</a>
-                    <a href="#" onclick="confirmarExclusao('deletar.php?id=<?= $d['GeneroID'] ?>')" class="btn btn-delete">Excluir</a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            <br><br>
+
+            <a href="deletar.php?id=<?= $_GET['id'] ?>&confirmado=1" class="btn btn-delete">
+                Confirmar exclusão
+            </a>
+        </div>
+    <?php endif; ?>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php foreach($dados as $d): ?>
+                <tr>
+                    <td><?= $d['GeneroID'] ?></td>
+                    <td><?= $d['nome'] ?></td>
+                    <td class="actions">
+                        <a href="editar.php?id=<?= $d['GeneroID'] ?>" class="btn btn-edit">Editar</a>
+                        <a href="#" onclick="confirmarExclusao('deletar.php?id=<?= $d['GeneroID'] ?>')" class="btn btn-delete">Excluir</a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+
+        </table>
+    </div>
 
 </div>
 

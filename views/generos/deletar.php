@@ -5,12 +5,23 @@ require_once '../../repositories/GeneroRepository.php';
 $repo = new GeneroRepository();
 
 $id = $_GET['id'];
-$dado = $repo->buscar($id);
+$genero = $repo->buscar($id);
+
+$qtd = $repo->contarMusicas($id);
+
+if($qtd > 0 && !isset($_GET['confirmado'])) {
+    header("Location: listar.php?confirmar=1&id=$id&qtd=$qtd");
+    exit;
+}
 
 $_SESSION['undo'] = [
     'tipo' => 'genero',
-    'dados' => $dado
+    'dados' => $genero
 ];
+
+if($qtd > 0){
+    $repo->removerVinculoMusicas($id);
+}
 
 $repo->deletar($id);
 
