@@ -1,12 +1,17 @@
 <?php
+session_start();
 require_once '../../repositories/GeneroRepository.php';
 
 $repo = new GeneroRepository();
 
-$sucesso = $repo->deletar($_GET['id']);
+$id = $_GET['id'];
+$dado = $repo->buscar($id);
 
-if(!$sucesso){
-    header("Location: listar.php?erro=1");
-} else {
-    header("Location: listar.php?sucesso=1");
-}
+$_SESSION['undo'] = [
+    'tipo' => 'genero',
+    'dados' => $dado
+];
+
+$repo->deletar($id);
+
+header("Location: listar.php?msg=excluido");

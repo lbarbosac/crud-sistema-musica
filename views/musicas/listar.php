@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../../repositories/MusicaRepository.php';
 include '../layout/header.php';
 
@@ -17,6 +18,13 @@ $musicas = $repo->listar();
             <a href="criar.php" class="btn btn-primary">Nova Música</a>
         </div>
     </div>
+
+    <?php if(isset($_GET['msg']) && isset($_SESSION['undo']) && $_SESSION['undo']['tipo'] == 'musica'): ?>
+        <div class="alert alert-success">
+            Música "<?= $_SESSION['undo']['dados']['titulo'] ?>" excluída
+            <a href="desfazer.php" class="btn btn-secondary">Desfazer</a>
+        </div>
+    <?php endif; ?>
 
     <div class="table-container">
         <table>
