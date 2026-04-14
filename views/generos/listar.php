@@ -14,24 +14,11 @@ $dados = $repo->listar();
         <a href="criar.php" class="btn btn-primary">Adicionar</a>
     </div>
 
+    <!-- MENSAGEM DE DESFAZER -->
     <?php if(isset($_GET['msg']) && isset($_SESSION['undo']) && $_SESSION['undo']['tipo'] == 'genero'): ?>
         <div class="alert alert-success">
             Gênero "<?= $_SESSION['undo']['dados']['nome'] ?>" excluído
             <a href="desfazer.php" class="undo-link">Desfazer</a>
-        </div>
-    <?php endif; ?>
-
-    <?php if(isset($_GET['confirmar'])): ?>
-        <div class="alert alert-error">
-            O gênero selecionado está vinculado a <?= $_GET['qtd'] ?> música(s).<br>
-            Ao continuar, essas músicas ficarão sem gênero associado.<br><br>
-            Deseja realmente excluir este gênero?
-
-            <br><br>
-
-            <a href="deletar.php?id=<?= $_GET['id'] ?>&confirmado=1" class="btn btn-delete">
-                Confirmar exclusão
-            </a>
         </div>
     <?php endif; ?>
 
@@ -46,13 +33,25 @@ $dados = $repo->listar();
             </thead>
 
             <tbody>
-                <?php foreach($dados as $d): ?>
+                <?php foreach($dados as $d): 
+                    $qtd = $repo->contarMusicas($d['GeneroID']);
+                ?>
                 <tr>
                     <td><?= $d['GeneroID'] ?></td>
                     <td><?= $d['nome'] ?></td>
                     <td class="actions">
                         <a href="editar.php?id=<?= $d['GeneroID'] ?>" class="btn btn-edit">Editar</a>
-                        <a href="#" onclick="confirmarExclusao('deletar.php?id=<?= $d['GeneroID'] ?>')" class="btn btn-delete">Excluir</a>
+
+                        <?php if($qtd > 0): ?>
+                            <a href="#" onclick="abrirModalGenero(<?= $d['GeneroID'] ?>, <?= $qtd ?>)" class="btn btn-delete">
+                                Excluir
+                            </a>
+                        <?php else: ?>
+                            <a href="#" onclick="confirmarExclusao('deletar.php?id=<?= $d['GeneroID'] ?>')" class="btn btn-delete">
+                                Excluir
+                            </a>
+                        <?php endif; ?>
+
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -62,5 +61,47 @@ $dados = $repo->listar();
     </div>
 
 </div>
+
+<!-- MODAL DE AVISO -->
+<div id="modal-genero" class="modal-warning">
+    <div class="modal-warning-content">
+        <p id="texto-modal"></p>
+
+        <div class="modal-warning-buttons">
+            <button id="cancelar-genero" class="btn btn-secondary">Cancelar</button>
+            <button id="confirmar-genero" class="btn btn-delete">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirModalGenero(id, qtd) {
+    const modal = document.getElementById("modal-genero");
+    const texto = document.getElementById("texto-modal");
+
+    texto.innerHTML = `
+        Este gênero está vinculado a ${qtd} música(s).<br>
+        Ao continuar, essas músicas ficarão sem gênero.<br><br>
+        Deseja realmente excluir?
+    `;
+
+    modal.classList.add("show");
+
+    document.getElementById("confirmar-genero").onclick = function() {
+        window.location.href = "deletar.php?id=" + id + "&confirmado=1";
+    };
+
+    document.getElementById("cancelar-genero").onclick = function() {
+        modal.classList.remove("show");
+    };
+}
+
+window.onclick = function(e) {
+    const modal = document.getElementById("modal-genero");
+    if (e.target === modal) {
+        modal.classList.remove("show");
+    }
+};
+</script>
 
 <?php include '../layout/footer.php'; ?>
