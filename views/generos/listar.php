@@ -11,7 +11,13 @@ $dados = $repo->listar();
         <h2>Gêneros</h2>
         <a href="criar.php" class="btn btn-primary">Adicionar</a>
     </div>
+    <?php if(isset($_GET['erro'])): ?>
+    <div class="alert alert-error">Não é possível excluir: gênero em uso.</div>
+<?php endif; ?>
 
+<?php if(isset($_GET['sucesso'])): ?>
+    <div class="alert alert-success">Excluído com sucesso.</div>
+<?php endif; ?>
     <table>
         <tr><th>ID</th><th>Nome</th><th>Ações</th></tr>
 

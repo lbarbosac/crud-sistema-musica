@@ -11,7 +11,7 @@ class ArtistaRepository {
     }
 
     public function listar() {
-        $stmt = $this->conn->query("SELECT * FROM artistas ORDER BY nome ASC");
+        $stmt = $this->conn->query("SELECT * FROM artistas ORDER BY ArtistaID ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

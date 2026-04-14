@@ -11,7 +11,7 @@ class GeneroRepository {
     }
 
     public function listar() {
-        $stmt = $this->conn->query("SELECT * FROM generos ORDER BY nome ASC");
+        $stmt = $this->conn->query("SELECT * FROM generos ORDER BY GeneroID ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -32,7 +32,11 @@ class GeneroRepository {
     }
 
     public function deletar($id) {
-        $stmt = $this->conn->prepare("DELETE FROM generos WHERE GeneroID = ?");
-        return $stmt->execute([$id]);
+        try {
+            $stmt = $this->conn->prepare("DELETE FROM generos WHERE GeneroID = ?");
+            return $stmt->execute([$id]);
+        } catch (PDOException $e) {
+            return false;
+        }
     }
 }

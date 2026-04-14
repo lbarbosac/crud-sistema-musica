@@ -14,8 +14,9 @@ class MusicaRepository {
         $sql = "SELECT m.*, a.nome AS artista, g.nome AS genero 
                 FROM musicas m
                 JOIN artistas a ON m.ArtistaID = a.ArtistaID
-                JOIN generos g ON m.GeneroID = g.GeneroID";
-
+                JOIN generos g ON m.GeneroID = g.GeneroID
+                ORDER BY m.MusicaID ASC";
+    
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
