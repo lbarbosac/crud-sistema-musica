@@ -235,3 +235,15 @@ tbody tr:hover {
         width: 100%;
     }
 }
+
+.undo-link {
+    color: #2563eb;
+    text-decoration: underline;
+    font-size: 14px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.undo-link:hover {
+    color: #1e40af;
+}

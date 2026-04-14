@@ -17,7 +17,7 @@ $dados = $repo->listar();
     <?php if(isset($_GET['msg']) && isset($_SESSION['undo']) && $_SESSION['undo']['tipo'] == 'genero'): ?>
         <div class="alert alert-success">
             Gênero "<?= $_SESSION['undo']['dados']['nome'] ?>" excluído
-            <a href="desfazer.php" class="btn btn-secondary">Desfazer</a>
+            <a href="desfazer.php" class="undo-link">Desfazer</a>
         </div>
     <?php endif; ?>
 

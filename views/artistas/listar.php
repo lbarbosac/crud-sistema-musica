@@ -17,7 +17,7 @@ $dados = $repo->listar();
     <?php if(isset($_GET['msg']) && isset($_SESSION['undo']) && $_SESSION['undo']['tipo'] == 'artista'): ?>
         <div class="alert alert-success">
             Artista "<?= $_SESSION['undo']['dados']['nome'] ?>" excluído
-            <a href="desfazer.php" class="btn btn-secondary">Desfazer</a>
+            <a href="desfazer.php" class="undo-link">Desfazer</a>
         </div>
     <?php endif; ?>
 
