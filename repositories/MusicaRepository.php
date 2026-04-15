@@ -21,7 +21,7 @@ class MusicaRepository {
                 FROM musicas m
                 LEFT JOIN artistas a ON m.ArtistaID = a.ArtistaID
                 LEFT JOIN generos g ON m.GeneroID = g.GeneroID
-                ORDER BY m.MusicaID ASC";
+                ORDER BY m.MusicaID DESC";
     
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
