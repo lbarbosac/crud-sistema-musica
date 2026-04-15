@@ -75,9 +75,9 @@ $dados = $repo->listar();
                 Cancelar
             </button>
 
-            <button id="confirmar-musica" class="btn btn-delete">
+            <a id="confirmar-musica" class="btn btn-delete" href="#">
                 Confirmar
-            </button>
+            </a>
         </div>
     </div>
 </div>
@@ -94,21 +94,19 @@ function abrirModalMusica(id) {
 
     modal.classList.add("show");
 
-    document.getElementById("confirmar-musica").onclick = function() {
-        window.location.href = "deletar.php?id=" + id;
-    };
+    document.getElementById("confirmar-musica").href = "deletar.php?id=" + id;
 
     document.getElementById("cancelar-musica").onclick = function() {
         modal.classList.remove("show");
     };
 }
 
-window.onclick = function(e) {
+window.addEventListener("click", function(e) {
     const modal = document.getElementById("modal-musica");
     if (e.target === modal) {
         modal.classList.remove("show");
     }
-};
+});
 </script>
 
 <?php include '../layout/footer.php'; ?>

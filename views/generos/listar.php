@@ -121,7 +121,7 @@ function abrirModalGenero(id, qtd) {
     };
 }
 
-window.onclick = function(e) {
+window.addEventListener("click", function(e)) {
     const modal = document.getElementById("modal-genero");
     if (e.target === modal) {
         modal.classList.remove("show");
