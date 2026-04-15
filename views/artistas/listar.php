@@ -52,8 +52,8 @@ $dados = $repo->listar();
                         </a>
 
                         <a href="#" 
-                           onclick="abrirModalMusica(<?= $m['MusicaID'] ?>)" 
-                           class="btn btn-delete">
+                            onclick="abrirModalMusica(<?= $m['MusicaID'] ?>); return false;" 
+                            class="btn btn-delete">
                             Excluir
                         </a>
 
