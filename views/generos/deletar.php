@@ -1,27 +1,29 @@
 <?php
 session_start();
 require_once '../../repositories/GeneroRepository.php';
+require_once '../../configs/database.php';
 
+$conn = (new Database())->connect();
 $repo = new GeneroRepository();
 
 $id = $_GET['id'];
+
 $genero = $repo->buscar($id);
 
-$qtd = $repo->contarMusicas($id);
+// músicas afetadas
+$stmt = $conn->prepare("SELECT MusicaID FROM musicas WHERE GeneroID = ?");
+$stmt->execute([$id]);
+$musicas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if($qtd > 0 && !isset($_GET['confirmado'])) {
-    header("Location: listar.php?confirmar=1&id=$id&qtd=$qtd");
-    exit;
-}
-
+// salva
 $_SESSION['undo'] = [
     'tipo' => 'genero',
-    'dados' => $genero
+    'dados' => $genero,
+    'musicas' => $musicas
 ];
 
-if($qtd > 0){
-    $repo->removerVinculoMusicas($id);
-}
+// remove vínculo
+$conn->prepare("UPDATE musicas SET GeneroID = NULL WHERE GeneroID = ?")->execute([$id]);
 
 $repo->deletar($id);
 
