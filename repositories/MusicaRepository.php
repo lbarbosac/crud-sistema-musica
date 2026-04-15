@@ -1,38 +1,27 @@
 <?php
 require_once __DIR__ . '/../configs/database.php';
-require_once __DIR__ . '/../models/Musica.php';
 
 class MusicaRepository {
     private $conn;
 
     public function __construct() {
-        $database = new Database();
-        $this->conn = $database->connect();
+        $this->conn = (new Database())->connect();
     }
 
     public function listar() {
-        $sql = "SELECT m.*, a.nome AS artista, g.nome AS genero 
+        $sql = "SELECT 
+                    m.MusicaID,
+                    m.titulo,
+                    m.duracao,
+                    m.AnoLancamento,
+                    a.nome AS artista,
+                    g.nome AS genero
                 FROM musicas m
-                JOIN artistas a ON m.ArtistaID = a.ArtistaID
-                JOIN generos g ON m.GeneroID = g.GeneroID
+                LEFT JOIN artistas a ON m.ArtistaID = a.ArtistaID
+                LEFT JOIN generos g ON m.GeneroID = g.GeneroID
                 ORDER BY m.MusicaID ASC";
-    
+
         return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function criar($dados) {
-        $sql = "INSERT INTO musicas (titulo, duracao, AnoLancamento, ArtistaID, GeneroID)
-                VALUES (:titulo, :duracao, :ano, :artista, :genero)";
-
-        $stmt = $this->conn->prepare($sql);
-
-        return $stmt->execute([
-            ':titulo' => $dados['titulo'],
-            ':duracao' => $dados['duracao'],
-            ':ano' => $dados['AnoLancamento'],
-            ':artista' => $dados['ArtistaID'],
-            ':genero' => $dados['GeneroID']
-        ]);
     }
 
     public function buscar($id) {
@@ -41,24 +30,36 @@ class MusicaRepository {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function atualizar($dados) {
-        $sql = "UPDATE musicas SET 
-                titulo = :titulo,
-                duracao = :duracao,
-                AnoLancamento = :ano,
-                ArtistaID = :artista,
-                GeneroID = :genero
-                WHERE MusicaID = :id";
-
-        $stmt = $this->conn->prepare($sql);
+    public function criar($dados) {
+        $stmt = $this->conn->prepare("
+            INSERT INTO musicas 
+            (titulo, duracao, AnoLancamento, ArtistaID, GeneroID)
+            VALUES (?, ?, ?, ?, ?)
+        ");
 
         return $stmt->execute([
-            ':titulo' => $dados['titulo'],
-            ':duracao' => $dados['duracao'],
-            ':ano' => $dados['AnoLancamento'],
-            ':artista' => $dados['ArtistaID'],
-            ':genero' => $dados['GeneroID'],
-            ':id' => $dados['MusicaID']
+            $dados['titulo'],
+            $dados['duracao'],
+            $dados['ano'],
+            $dados['ArtistaID'] ?: null,
+            $dados['GeneroID'] ?: null
+        ]);
+    }
+
+    public function atualizar($id, $dados) {
+        $stmt = $this->conn->prepare("
+            UPDATE musicas 
+            SET titulo = ?, duracao = ?, AnoLancamento = ?, ArtistaID = ?, GeneroID = ?
+            WHERE MusicaID = ?
+        ");
+
+        return $stmt->execute([
+            $dados['titulo'],
+            $dados['duracao'],
+            $dados['ano'],
+            $dados['ArtistaID'] ?: null,
+            $dados['GeneroID'] ?: null,
+            $id
         ]);
     }
 

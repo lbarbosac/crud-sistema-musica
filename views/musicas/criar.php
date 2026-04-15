@@ -1,66 +1,81 @@
 <?php
+session_start();
 require_once '../../repositories/MusicaRepository.php';
 require_once '../../repositories/ArtistaRepository.php';
 require_once '../../repositories/GeneroRepository.php';
+
 include '../layout/header.php';
 
 $repo = new MusicaRepository();
 $artistas = (new ArtistaRepository())->listar();
 $generos = (new GeneroRepository())->listar();
 
-$erro = "";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-if($_POST){
-    $anoAtual = date("Y");
+    $duracao = $_POST['duracao'];
+    $ano = $_POST['ano'];
 
-    if($_POST['AnoLancamento'] > $anoAtual){
-        $erro = "Ano inválido!";
-    } elseif(strlen(str_replace(':','', $_POST['duracao'])) != 6){
-        $erro = "Duração inválida!";
+    if(strlen(str_replace(':','',$duracao)) != 6){
+        echo "<div class='alert alert-error'>Duração inválida</div>";
+    } elseif($ano > date('Y')){
+        echo "<div class='alert alert-error'>Ano inválido</div>";
     } else {
         $repo->criar($_POST);
         header("Location: listar.php");
+        exit;
     }
 }
 ?>
 
 <div class="card">
+
     <h2>Nova Música</h2>
 
-    <?php if($erro): ?>
-        <div class="alert alert-error"><?= $erro ?></div>
-    <?php endif; ?>
-
     <form method="POST">
+
         <div class="input-group">
             <label>Título</label>
-            <input name="titulo" required>
+            <input type="text" name="titulo" required>
         </div>
 
         <div class="input-group">
-            <label>Duração</label>
-            <input name="duracao" oninput="formatarDuracao(this)" placeholder="00:00:00" required>
+            <label>Duração (00:00:00)</label>
+            <input type="text" name="duracao" maxlength="8" oninput="formatarDuracao(this)" required>
         </div>
 
         <div class="input-group">
             <label>Ano</label>
-            <input type="number" name="AnoLancamento" required>
+            <input type="number" name="ano" max="<?= date('Y') ?>" required>
         </div>
 
-        <select name="ArtistaID">
-            <?php foreach($artistas as $a): ?>
-                <option value="<?= $a['ArtistaID'] ?>"><?= $a['nome'] ?></option>
-            <?php endforeach; ?>
-        </select>
+        <div class="input-group">
+            <label>Artista</label>
+            <select name="ArtistaID">
+                <option value="">Sem artista</option>
+                <?php foreach($artistas as $a): ?>
+                    <option value="<?= $a['ArtistaID'] ?>">
+                        <?= $a['nome'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-        <select name="GeneroID">
-            <?php foreach($generos as $g): ?>
-                <option value="<?= $g['GeneroID'] ?>"><?= $g['nome'] ?></option>
-            <?php endforeach; ?>
-        </select>
+        <div class="input-group">
+            <label>Gênero</label>
+            <select name="GeneroID">
+                <option value="">Sem gênero</option>
+                <?php foreach($generos as $g): ?>
+                    <option value="<?= $g['GeneroID'] ?>">
+                        <?= $g['nome'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
 
-        <button class="btn btn-primary">Salvar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+
     </form>
+
 </div>
 
 <?php include '../layout/footer.php'; ?>

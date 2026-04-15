@@ -45,8 +45,8 @@ $musicas = $repo->listar();
                 <tr>
                     <td><?= $m['MusicaID'] ?></td>
                     <td><?= $m['titulo'] ?></td>
-                    <td><?= $m['artista'] ?></td>
-                    <td><?= $m['genero'] ?></td>
+                    <td><?= $m['artista'] ?? 'Sem artista' ?></td>
+                    <td><?= $m['genero'] ?? 'Sem gênero' ?></td>
                     <td><?= $m['duracao'] ?></td>
                     <td><?= $m['AnoLancamento'] ?></td>
                     <td>
