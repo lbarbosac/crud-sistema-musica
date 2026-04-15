@@ -1,24 +1,22 @@
 <?php
-session_start();
 require_once '../../repositories/MusicaRepository.php';
 require_once '../../repositories/ArtistaRepository.php';
 require_once '../../repositories/GeneroRepository.php';
-
 include '../layout/header.php';
 
 $repo = new MusicaRepository();
 $artistas = (new ArtistaRepository())->listar();
 $generos = (new GeneroRepository())->listar();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$erro = "";
 
-    $duracao = $_POST['duracao'];
-    $ano = $_POST['ano'];
+if($_POST){
+    $anoAtual = date("Y");
 
-    if(strlen(str_replace(':','',$duracao)) != 6){
-        echo "<div class='alert alert-error'>Duração inválida</div>";
-    } elseif($ano > date('Y')){
-        echo "<div class='alert alert-error'>Ano inválido</div>";
+    if($_POST['AnoLancamento'] > $anoAtual){
+        $erro = "Ano inválido!";
+    } elseif(strlen(str_replace(':','', $_POST['duracao'])) != 6){
+        $erro = "Duração inválida!";
     } else {
         $repo->criar($_POST);
         header("Location: listar.php");
@@ -28,24 +26,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <div class="card">
-
     <h2>Nova Música</h2>
+
+    <?php if($erro): ?>
+        <div class="alert alert-error"><?= $erro ?></div>
+    <?php endif; ?>
 
     <form method="POST">
 
         <div class="input-group">
             <label>Título</label>
-            <input type="text" name="titulo" required>
+            <input name="titulo" required>
         </div>
 
         <div class="input-group">
-            <label>Duração (00:00:00)</label>
-            <input type="text" name="duracao" maxlength="8" oninput="formatarDuracao(this)" required>
+            <label>Duração</label>
+            <input name="duracao" oninput="formatarDuracao(this)" placeholder="00:00:00" required>
         </div>
 
         <div class="input-group">
             <label>Ano</label>
-            <input type="number" name="ano" max="<?= date('Y') ?>" required>
+            <input type="number" name="AnoLancamento" max="<?= date('Y') ?>" required>
         </div>
 
         <div class="input-group">
@@ -72,10 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Salvar</button>
+        <button class="btn btn-primary">Salvar</button>
 
     </form>
-
 </div>
 
 <?php include '../layout/footer.php'; ?>
