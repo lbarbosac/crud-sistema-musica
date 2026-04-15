@@ -1,22 +1,22 @@
 <?php
 session_start();
-require_once '../../repositories/MusicaRepository.php';
+require_once '../../repositories/ArtistaRepository.php';
 include '../layout/header.php';
 
-$repo = new MusicaRepository();
+$repo = new ArtistaRepository();
 $dados = $repo->listar();
 ?>
 
 <div class="card">
 
     <div class="top-bar">
-        <h2>Lista de Músicas</h2>
+        <h2>Artistas</h2>
         <a href="criar.php" class="btn btn-primary">Adicionar</a>
     </div>
 
-    <?php if(isset($_GET['msg']) && isset($_SESSION['undo']) && $_SESSION['undo']['tipo'] == 'musica'): ?>
+    <?php if(isset($_GET['msg']) && isset($_SESSION['undo']) && $_SESSION['undo']['tipo'] == 'artista'): ?>
         <div class="alert alert-success">
-            Música "<?= $_SESSION['undo']['dados']['titulo'] ?>" excluída
+            Artista "<?= $_SESSION['undo']['dados']['nome'] ?>" excluído
             <a href="desfazer.php" class="undo-link">Desfazer</a>
         </div>
     <?php endif; ?>
@@ -26,34 +26,28 @@ $dados = $repo->listar();
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Título</th>
-                    <th>Duração</th>
-                    <th>Ano</th>
-                    <th>Artista</th>
-                    <th>Gênero</th>
+                    <th>Nome</th>
                     <th>Ações</th>
                 </tr>
             </thead>
 
             <tbody>
-                <?php foreach($dados as $m): ?>
+                <?php foreach($dados as $d): 
+                    $qtd = $repo->contarMusicas($d['ArtistaID']);
+                ?>
                 <tr>
-                    <td><?= $m['MusicaID'] ?></td>
-                    <td><?= $m['titulo'] ?></td>
-                    <td><?= $m['duracao'] ?></td>
-                    <td><?= $m['AnoLancamento'] ?></td>
-                    <td><?= $m['artista'] ?? '—' ?></td>
-                    <td><?= $m['genero'] ?? '—' ?></td>
+                    <td><?= $d['ArtistaID'] ?></td>
+                    <td><?= $d['nome'] ?></td>
 
                     <td class="actions">
 
-                        <a href="editar.php?id=<?= $m['MusicaID'] ?>" class="btn btn-edit">
+                        <a href="editar.php?id=<?= $d['ArtistaID'] ?>" class="btn btn-edit">
                             Editar
                         </a>
 
                         <a href="#" 
-                            onclick="abrirModalMusica(<?= $m['MusicaID'] ?>); return false;" 
-                            class="btn btn-delete">
+                           onclick="abrirModalArtista(<?= $d['ArtistaID'] ?>, <?= $qtd ?>); return false;" 
+                           class="btn btn-delete">
                             Excluir
                         </a>
 
@@ -66,16 +60,16 @@ $dados = $repo->listar();
 
 </div>
 
-<div id="modal-musica" class="modal-warning">
+<div id="modal-artista" class="modal-warning">
     <div class="modal-warning-content">
-        <p>Deseja realmente excluir esta música?</p>
+        <p id="texto-modal-artista"></p>
 
         <div class="modal-warning-buttons">
-            <button id="cancelar-musica" class="btn btn-secondary">
+            <button id="cancelar-artista" class="btn btn-secondary">
                 Cancelar
             </button>
 
-            <a id="confirmar-musica" class="btn btn-delete" href="#">
+            <a id="confirmar-artista" class="btn btn-delete" href="#">
                 Confirmar
             </a>
         </div>
@@ -83,26 +77,33 @@ $dados = $repo->listar();
 </div>
 
 <script>
-function abrirModalMusica(id) {
+function abrirModalArtista(id, qtd) {
 
     if(localStorage.getItem("avisos") === "off"){
         window.location.href = "deletar.php?id=" + id;
         return;
     }
 
-    const modal = document.getElementById("modal-musica");
+    const modal = document.getElementById("modal-artista");
+    const texto = document.getElementById("texto-modal-artista");
+
+    texto.innerHTML = `
+        Este artista está vinculado a ${qtd} música(s).<br>
+        Ao continuar, essas músicas ficarão sem artista associado.<br><br>
+        Deseja realmente excluir este artista?
+    `;
 
     modal.classList.add("show");
 
-    document.getElementById("confirmar-musica").href = "deletar.php?id=" + id;
+    document.getElementById("confirmar-artista").href = "deletar.php?id=" + id;
 
-    document.getElementById("cancelar-musica").onclick = function() {
+    document.getElementById("cancelar-artista").onclick = function() {
         modal.classList.remove("show");
     };
 }
 
 window.addEventListener("click", function(e) {
-    const modal = document.getElementById("modal-musica");
+    const modal = document.getElementById("modal-artista");
     if (e.target === modal) {
         modal.classList.remove("show");
     }

@@ -52,7 +52,13 @@ $musicas = $repo->listar();
                     <td>
                         <div class="actions">
                             <a href="editar.php?id=<?= $m['MusicaID'] ?>" class="btn btn-edit">Editar</a>
-                            <a href="#" onclick="confirmarExclusao('deletar.php?id=<?= $m['MusicaID'] ?>')" class="btn btn-delete">Excluir</a>
+
+                            <a href="#" 
+                               onclick="abrirModalMusica(<?= $m['MusicaID'] ?>); return false;" 
+                               class="btn btn-delete">
+                                Excluir
+                            </a>
+
                         </div>
                     </td>
                 </tr>
@@ -63,5 +69,48 @@ $musicas = $repo->listar();
     </div>
 
 </div>
+
+<div id="modal-musica" class="modal-warning">
+    <div class="modal-warning-content">
+        <p>Deseja realmente excluir esta música?</p>
+
+        <div class="modal-warning-buttons">
+            <button id="cancelar-musica" class="btn btn-secondary">
+                Cancelar
+            </button>
+
+            <a id="confirmar-musica" class="btn btn-delete" href="#">
+                Confirmar
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirModalMusica(id) {
+
+    if(localStorage.getItem("avisos") === "off"){
+        window.location.href = "deletar.php?id=" + id;
+        return;
+    }
+
+    const modal = document.getElementById("modal-musica");
+
+    modal.classList.add("show");
+
+    document.getElementById("confirmar-musica").href = "deletar.php?id=" + id;
+
+    document.getElementById("cancelar-musica").onclick = function() {
+        modal.classList.remove("show");
+    };
+}
+
+window.addEventListener("click", function(e) {
+    const modal = document.getElementById("modal-musica");
+    if (e.target === modal) {
+        modal.classList.remove("show");
+    }
+});
+</script>
 
 <?php include '../layout/footer.php'; ?>
