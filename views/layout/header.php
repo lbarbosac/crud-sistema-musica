@@ -11,6 +11,8 @@ if (session_status() === PHP_SESSION_NONE) {
     <title>Sistema de Músicas</title>
 
     <link rel="stylesheet" href="/aula0414teste/assets/css/style.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -24,6 +26,10 @@ if (session_status() === PHP_SESSION_NONE) {
                     Sistema de Músicas
                 </a>
             </h1>
+
+            <div class="config-icon" onclick="abrirConfig()">
+                <i class="fa-solid fa-gear"></i>
+            </div>
 
         </div>
     </div>

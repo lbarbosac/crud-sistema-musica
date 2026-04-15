@@ -52,7 +52,7 @@ $dados = $repo->listar();
                             </a>
                         <?php else: ?>
                             <a href="#" 
-                               onclick="confirmarExclusao('deletar.php?id=<?= $d['ArtistaID'] ?>')" 
+                               onclick="confirmarExclusaoDireta('deletar.php?id=<?= $d['ArtistaID'] ?>')" 
                                class="btn btn-delete">
                                 Excluir
                             </a>
@@ -84,7 +84,23 @@ $dados = $repo->listar();
 </div>
 
 <script>
+function confirmarExclusaoDireta(url){
+    if(localStorage.getItem("avisos") === "off"){
+        window.location.href = url;
+    } else {
+        if(confirm("Deseja realmente excluir?")){
+            window.location.href = url;
+        }
+    }
+}
+
 function abrirModalArtista(id, qtd) {
+
+    if(localStorage.getItem("avisos") === "off"){
+        window.location.href = "deletar.php?id=" + id;
+        return;
+    }
+
     const modal = document.getElementById("modal-artista");
     const texto = document.getElementById("texto-modal-artista");
 
@@ -105,7 +121,6 @@ function abrirModalArtista(id, qtd) {
     };
 }
 
-// fechar clicando fora
 window.onclick = function(e) {
     const modal = document.getElementById("modal-artista");
     if (e.target === modal) {

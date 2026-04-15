@@ -1,47 +1,49 @@
 </div>
 
-<div id="modal-delete" class="modal">
-    <div class="modal-content">
-        <p>Tem certeza que deseja excluir?</p>
+<!-- MODAL CONFIG -->
+<div id="modal-config" class="modal-config">
+    <div class="modal-config-box">
+        <h3>Configurações</h3>
 
-        <div class="modal-buttons">
-            <button id="confirm-delete" class="btn btn-delete">Excluir</button>
-            <button id="cancel-delete" class="btn btn-secondary">Cancelar</button>
+        <div class="config-item">
+            <span>Exibir confirmações de ações</span>
+
+            <label class="switch">
+                <input type="checkbox" id="toggleAvisos">
+                <span class="slider"></span>
+            </label>
         </div>
     </div>
 </div>
 
 <script>
-    const modal = document.getElementById("modal-delete");
+// abrir config
+function abrirConfig() {
+    document.getElementById("modal-config").classList.add("show");
+}
 
-    function confirmarExclusao(url) {
-        modal.classList.add("show");
-
-        document.getElementById("confirm-delete").onclick = function() {
-            window.location.href = url;
-        };
-
-        document.getElementById("cancel-delete").onclick = function() {
-            modal.classList.remove("show");
-        };
+// fechar clicando fora
+window.addEventListener("click", function(e){
+    const modal = document.getElementById("modal-config");
+    if(e.target === modal){
+        modal.classList.remove("show");
     }
+});
 
-    window.onclick = function(e) {
-        if (e.target === modal) {
-            modal.classList.remove("show");
-        }
-    };
+// salvar config
+const toggle = document.getElementById("toggleAvisos");
 
-    function formatarDuracao(input) {
-        let v = input.value.replace(/\D/g, '').slice(0,6);
+// carregar estado
+if(localStorage.getItem("avisos") === "off"){
+    toggle.checked = false;
+} else {
+    toggle.checked = true;
+}
 
-        if (v.length >= 5)
-            input.value = v.replace(/(\d{2})(\d{2})(\d{1,2})/, "$1:$2:$3");
-        else if (v.length >= 3)
-            input.value = v.replace(/(\d{2})(\d{1,2})/, "$1:$2");
-        else
-            input.value = v;
-    }
+// mudar estado
+toggle.addEventListener("change", function(){
+    localStorage.setItem("avisos", this.checked ? "on" : "off");
+});
 </script>
 
 </body>
