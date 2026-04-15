@@ -21,16 +21,14 @@ if ($_POST) {
     } else {
         // Processa a duração de forma flexível
         $raw = trim($_POST['duracao'] ?? '');
-        $d = str_replace(['.', 'h', 'm', 's'], ':', $raw); // só por segurança
-        $parts = explode(':', $d);
+        $parts = array_filter(explode(':', $raw)); // remove vazios
 
         $h = 0;
         $m = 0;
         $s = 0;
 
-        // 3:45 → 00:03:45
         if (count($parts) === 2) {
-            // 00:00 ou 0:00 -> minutos e segundos
+            // 3:45 → 00:03:45
             $m = (int)$parts[0];
             $s = (int)$parts[1];
         } elseif (count($parts) === 3) {
@@ -39,14 +37,16 @@ if ($_POST) {
             $m = (int)$parts[1];
             $s = (int)$parts[2];
         } else {
-            // se não bate com nada, tenta interpretar como segundos totais
+            // Se não bate com nada, interpreta como segundos totais
             $seconds = (int)$raw;
+
             $h = (int)($seconds / 3600);
-            $m = (int)($seconds % 3600 / 60);
-            $s = (int)($seconds % 60);
+            $seconds %= 3600;
+            $m = (int)($seconds / 60);
+            $s = $seconds % 60;
         }
 
-        // Valida limites mínimos e máximos
+        // Valida limites (minutos e segundos de 0 a 59)
         if ($m > 59 || $s > 59 || $h < 0 || $m < 0 || $s < 0) {
             $erro = "Duração inválida! Use 00:00 ou 00:00:00.";
         } else {
