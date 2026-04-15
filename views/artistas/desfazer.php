@@ -13,13 +13,21 @@ if(isset($_SESSION['undo']) && $_SESSION['undo']['tipo'] == 'artista'){
     // recria artista
     $repo->criar($dados['nome']);
 
-    // pega novo ID criado
-    $novoId = $conn->lastInsertId();
+    // pega ID correto (garantido)
+    $stmt = $conn->query("SELECT MAX(ArtistaID) as id FROM artistas");
+    $novoId = $stmt->fetch(PDO::FETCH_ASSOC)['id'];
 
     // restaura músicas
     foreach($_SESSION['undo']['musicas'] as $m){
-        $stmt = $conn->prepare("UPDATE musicas SET ArtistaID = ? WHERE MusicaID = ?");
-        $stmt->execute([$novoId, $m['MusicaID']]);
+        $stmt = $conn->prepare("
+            UPDATE musicas 
+            SET ArtistaID = :artista 
+            WHERE MusicaID = :musica
+        ");
+        $stmt->execute([
+            ':artista' => $novoId,
+            ':musica' => $m['MusicaID']
+        ]);
     }
 
     unset($_SESSION['undo']);
